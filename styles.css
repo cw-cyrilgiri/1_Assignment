@@ -1,25 +1,17 @@
 :root {
-  /* Colors */
   --green-light: hsl(148, 38%, 91%);
   --green-main: hsl(169, 82%, 27%);
   --red: hsl(0, 66%, 54%);
-
   --white: hsl(0, 0%, 100%);
   --grey: hsl(186, 15%, 59%);
   --dark: hsl(187, 24%, 22%);
-
-  /* Typography */
   --font-family: "Karla", sans-serif;
   --font-size: 16px;
   --font-bold: 700;
-
-  /* Spacing */
   --gap-sm: 0.75rem;
   --gap-md: 1rem;
   --gap-lg: 1.5rem;
   --gap-xl: 2rem;
-
-  /* Radius */
   --radius: 8px;
   --green-accent-rgb: 30, 163, 100;
 }
@@ -150,7 +142,6 @@ button:hover {
 
 input,
 textarea:hover {
-  /* reserved for minor hover tweaks */
 }
 
 .required {
@@ -159,7 +150,6 @@ textarea:hover {
   margin-left: 0.25rem;
 }
 
-/* Hover 'green light' for inputs and textarea */
 input[type="text"]:hover,
 input[type="email"]:hover,
 textarea:hover {
@@ -168,33 +158,28 @@ textarea:hover {
   transition: box-shadow 180ms ease, border-color 180ms ease;
 }
 
-/* Hover/active feedback for radio and checkbox groups */
 .radio-group:hover,
 .checkbox-group:hover {
   box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.06);
   border-color: var(--green-main);
 }
 
-/* Use accent-color for native form controls when checked */
 input[type="radio"],
 input[type="checkbox"] {
   accent-color: var(--green-main);
   transition: box-shadow 120ms ease, border-color 120ms ease;
 }
 
-/* Label styling when the underlying control is checked */
 .radio-group input[type="radio"]:checked + label,
 .checkbox-group input[type="checkbox"]:checked + label {
   color: var(--green-main);
   font-weight: var(--font-bold);
 }
 
-/* Make labels react on hover to give the 'green' hint for radios/checkboxes */
 .radio-group label:hover{
   color: var(--green-main);
 }
 
-/* Selected state for the entire radio-group */
 .radio-group.selected,
 .radio-group:has(input:checked) {
   background-color: var(--green-light);
@@ -206,15 +191,13 @@ input[type="checkbox"] {
   font-weight: var(--font-bold);
 }
 
-/* Remove native focus rectangle for radios and rely on group styling */
-input[type="radio"]:focus {
-  outline: none;
+input[type="radio"]:focus-visible {
+  outline: 3px solid rgba(var(--green-accent-rgb), 0.12);
   box-shadow: none;
 }
 
-/* Prevent the group from showing extra focus ring; keep keyboard accessibility */
 .radio-group:focus-within {
-  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--green-accent-rgb), 0.12);
 }
 
 /* ERROR STYLES */
@@ -235,9 +218,7 @@ input[type="radio"]:focus {
   font-size: 0.9rem;
 }
 
-.error-message.visible {
-  display: block;
-}
+.error-message.visible {display:block}
 
 fieldset {
   border: none;
@@ -283,13 +264,8 @@ input[type="checkbox"] {
   transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 280ms ease;
 }
 
-.success-toast[hidden] { display: block; } /* keep in DOM for animation */
-
-.success-toast.show {
-  transform: translate(-50%, 0);
-  opacity: 1;
-  pointer-events: auto;
-}
+.success-toast[hidden]{display:block}
+.success-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
 
 .success-toast__inner {
   display: flex;
@@ -320,15 +296,7 @@ input[type="checkbox"] {
 .success-toast__title { display: block; font-weight: var(--font-bold); }
 .success-toast__message { font-size: 0.95rem; opacity: 0.95; }
 
-.success-toast__close {
-  margin-left: auto;
-  border: none;
-  background: transparent;
-  color: rgba(255,255,255,0.8);
-  font-size: 1.1rem;
-  cursor: pointer;
-  padding: 0.25rem 0.5rem;
-}
+/* close button removed */
 
 @media (max-width: 480px) {
   .success-toast__inner { min-width: 280px; padding: 0.75rem; }

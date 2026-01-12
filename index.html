@@ -4,15 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact Us</title>
-
-    <!-- Google Font: Karla -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
-
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
 
@@ -29,7 +23,7 @@
           <strong class="success-toast__title">Message Sent!</strong>
           <div class="success-toast__message">Thanks for completing the form. We'll be in touch soon!</div>
         </div>
-        <!-- manual dismiss removed; toast will auto-dismiss -->
+        
       </div>
     </div>
     <main class="page">
@@ -39,44 +33,32 @@
         <div class="form-row">
             <div class="form-group">
               <label for="first-name">First Name <span class="required" aria-hidden="true">*</span></label>
-              <input type="text" id="first-name" name="firstName" required />
+              <input type="text" id="first-name" name="firstName" required aria-required="true" aria-describedby="first-name-error" />
               <div class="error-message" id="first-name-error" aria-live="polite"></div>
             </div>
             <div class="form-group">
               <label for="last-name">Last Name <span class="required" aria-hidden="true">*</span></label>
-              <input type="text" id="last-name" name="lastName" required />
+              <input type="text" id="last-name" name="lastName" required aria-required="true" aria-describedby="last-name-error" />
               <div class="error-message" id="last-name-error" aria-live="polite"></div>
             </div>
         </div>
 
         <div class="form-group">
           <label for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
-          <input type="email" id="email" name="email" required />
+          <input type="email" id="email" name="email" required aria-required="true" aria-describedby="email-error" />
           <div class="error-message" id="email-error" aria-live="polite"></div>
         </div>
 
         <fieldset class="form-group">
-          <legend>Query Type <span class="required" aria-hidden="true">*</span></legend>
+          <legend id="queryType-label">Query Type <span class="required" aria-hidden="true">*</span></legend>
 
           <div class="form-row">
-              <div class="radio-group">
-                <input
-                  type="radio"
-                  id="general-query"
-                  name="queryType"
-                  value="general"
-                  required
-                />
+              <div class="radio-group" role="group" aria-labelledby="queryType-label">
+                <input type="radio" id="general-query" name="queryType" value="general" required aria-required="true" aria-describedby="queryType-error" />
                 <label for="general-query">General Enquiry</label>
               </div>
-              <div class="radio-group">
-                <input
-                  type="radio"
-                  id="support-query"
-                  name="queryType"
-                  value="support"
-                  required
-                />
+              <div class="radio-group" role="group" aria-labelledby="queryType-label">
+                <input type="radio" id="support-query" name="queryType" value="support" required aria-required="true" aria-describedby="queryType-error" />
                 <label for="support-query">Support Request</label>
               </div>
           </div>
@@ -85,15 +67,13 @@
 
         <div class="form-group">
           <label for="message">Message <span class="required" aria-hidden="true">*</span></label>
-          <textarea id="message" name="message" required></textarea>
+          <textarea id="message" name="message" required aria-required="true" aria-describedby="message-error"></textarea>
           <div class="error-message" id="message-error" aria-live="polite"></div>
         </div>
 
         <div class="form-group checkbox-group">
-          <input type="checkbox" id="consent" name="consent" required />
-          <label for="consent">
-            I consent to being contacted by the team <span class="required" aria-hidden="true">*</span>
-          </label>
+          <input type="checkbox" id="consent" name="consent" required aria-required="true" aria-describedby="consent-error" />
+          <label for="consent">I consent to being contacted by the team <span class="required" aria-hidden="true">*</span></label>
           <div class="error-message" id="consent-error" aria-live="polite"></div>
         </div>
 

@@ -50,6 +50,12 @@ function initFormValidation() {
     if (!container) return;
     container.textContent = message;
     container.classList.add('visible');
+    if (id === 'queryType') {
+      document.querySelectorAll('input[name="queryType"]').forEach((r) => r.setAttribute('aria-invalid', 'true'));
+    } else {
+      const control = document.getElementById(id);
+      control?.setAttribute('aria-invalid', 'true');
+    }
   };
 
   const clearError = (id) => {
@@ -57,6 +63,12 @@ function initFormValidation() {
     if (!container) return;
     container.textContent = '';
     container.classList.remove('visible');
+    if (id === 'queryType') {
+      document.querySelectorAll('input[name="queryType"]').forEach((r) => r.removeAttribute('aria-invalid'));
+    } else {
+      const control = document.getElementById(id);
+      control?.removeAttribute('aria-invalid');
+    }
   };
 
   const markInvalid = (id) => {
@@ -79,14 +91,11 @@ function initFormValidation() {
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-
     Object.keys(validators).forEach((id) => {
       clearError(id);
       clearInvalid(id);
     });
-
     let firstInvalidControl = null;
-
     Object.entries(validators).forEach(([id, validate]) => {
       const result = id === 'queryType' ? validate() : validate(document.getElementById(id));
       if (result !== true) {
@@ -97,14 +106,11 @@ function initFormValidation() {
         }
       }
     });
-
     if (firstInvalidControl) {
       firstInvalidControl.focus();
       return;
     }
-
-    // Replace with actual submit behavior as needed
-      showSuccessToast();
+    showSuccessToast();
   });
 
   ['first-name', 'last-name', 'email', 'message', 'consent'].forEach((id) => {
@@ -126,32 +132,19 @@ function initFormValidation() {
 }
 
 /* Success toast handling */
-function showSuccessToast() {
-  const toast = document.getElementById('success-toast');
-  if (!toast) return;
-  // make visible with animation
-  toast.hidden = false;
-  toast.getBoundingClientRect();
-  toast.classList.add('show');
-
-  // reset the form fields and UI
-  const form = document.querySelector('.contact-form');
-  if (form) {
+function showSuccessToast(){
+  const toast=document.getElementById('success-toast');
+  if(!toast) return;
+  toast.hidden=false; toast.getBoundingClientRect(); toast.classList.add('show');
+  const form=document.querySelector('.contact-form');
+  if(form){
     form.reset();
-    // clear any error UI
-    document.querySelectorAll('.error-message').forEach((el) => {
-      el.textContent = '';
-      el.classList.remove('visible');
-    });
-    document.querySelectorAll('.input-error').forEach((el) => el.classList.remove('input-error'));
-    document.querySelectorAll('.radio-group').forEach((rg) => rg.classList.remove('selected', 'error'));
+    document.querySelectorAll('.error-message').forEach((el)=>{el.textContent='';el.classList.remove('visible')});
+    document.querySelectorAll('.input-error').forEach((el)=>el.classList.remove('input-error'));
+    document.querySelectorAll('.radio-group').forEach((rg)=>rg.classList.remove('selected','error'));
+    const firstControl=form.querySelector('input,textarea,select');
+    firstControl?.focus();
   }
-
-  // auto-dismiss after timeout
-  const dismiss = () => {
-    toast.classList.remove('show');
-    setTimeout(() => (toast.hidden = true), 420);
-  };
-
-  setTimeout(dismiss, 4200);
+  const dismiss=()=>{toast.classList.remove('show');setTimeout(()=>toast.hidden=true,420)};
+  setTimeout(dismiss,4200);
 }
