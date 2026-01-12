@@ -21,6 +21,7 @@
 
   /* Radius */
   --radius: 8px;
+  --green-accent-rgb: 30, 163, 100;
 }
 
 *,
@@ -152,13 +153,6 @@ textarea:hover {
   /* reserved for minor hover tweaks */
 }
 
-/* Green accents and interactions */
-:root {
-  /* keep existing vars; ensure a fallback accent */
-  --green-accent-rgb: 30, 163, 100;
-}
-
-/* Asterisk for required fields */
 .required {
   color: var(--green-main);
   font-weight: var(--font-bold);
@@ -275,4 +269,67 @@ input[type="checkbox"] {
   h1 {
     font-size: 1.5rem;
   }
+}
+
+/* Success toast (top-centred) */
+.success-toast {
+  position: fixed;
+  left: 50%;
+  top: 1.25rem;
+  transform: translate(-50%, -120%);
+  z-index: 1200;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 280ms ease;
+}
+
+.success-toast[hidden] { display: block; } /* keep in DOM for animation */
+
+.success-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.success-toast__inner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: hsl(170, 30%, 18%);
+  color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  min-width: 360px;
+  box-shadow: 0 8px 28px rgba(23, 54, 48, 0.12);
+}
+
+.success-toast__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  flex: 0 0 40px;
+  transform-origin: center;
+  transition: transform 360ms cubic-bezier(.2,.9,.2,1);
+}
+
+.success-toast.show .success-toast__icon { transform: scale(1.06); }
+
+.success-toast__title { display: block; font-weight: var(--font-bold); }
+.success-toast__message { font-size: 0.95rem; opacity: 0.95; }
+
+.success-toast__close {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .success-toast__inner { min-width: 280px; padding: 0.75rem; }
 }

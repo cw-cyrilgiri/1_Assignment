@@ -17,6 +17,21 @@
   </head>
 
   <body>
+    <div id="success-toast" class="success-toast" role="status" aria-live="polite" hidden>
+      <div class="success-toast__inner">
+        <span class="success-toast__icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="12" cy="12" r="11" stroke="rgba(255,255,255,0.14)" stroke-width="2" fill="none"></circle>
+            <path d="M7 12.5l2.5 2.5L17 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </span>
+        <div class="success-toast__content">
+          <strong class="success-toast__title">Message Sent!</strong>
+          <div class="success-toast__message">Thanks for completing the form. We'll be in touch soon!</div>
+        </div>
+        <button class="success-toast__close" aria-label="Dismiss message">×</button>
+      </div>
+    </div>
     <main class="page">
       <form action="" class="contact-form" novalidate>
         <h1>Contact Us</h1>
@@ -87,145 +102,6 @@
         </div>
       </form>
     </main>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const groups = document.querySelectorAll('.radio-group');
-        groups.forEach((g) => {
-          const input = g.querySelector('input[type="radio"]');
-          if (!input) return;
-
-          // Clicking the group (outside the native input/label) should select the radio
-          g.addEventListener('click', (e) => {
-            if (e.target.tagName.toLowerCase() === 'input') return;
-            input.checked = true;
-            input.dispatchEvent(new Event('change', { bubbles: true }));
-            input.focus({ preventScroll: true });
-          });
-
-          // Keep a "selected" class in sync for styling and for browsers that lack :has
-          input.addEventListener('change', () => {
-            document
-              .querySelectorAll(`.radio-group input[name="${input.name}"]`)
-              .forEach((inp) => {
-                const grp = inp.closest('.radio-group');
-                if (grp) grp.classList.toggle('selected', inp.checked);
-              });
-          });
-
-          // Initialize state
-          if (input.checked) g.classList.add('selected');
-        });
-
-        // FORM VALIDATION
-        const form = document.querySelector('.contact-form');
-
-        const showError = (id, message) => {
-          const el = document.getElementById(id + '-error');
-          if (!el) return;
-          el.textContent = message;
-          el.classList.add('visible');
-        };
-
-        const clearError = (id) => {
-          const el = document.getElementById(id + '-error');
-          if (!el) return;
-          el.textContent = '';
-          el.classList.remove('visible');
-        };
-
-        const validateEmail = (value) => {
-          // simple email pattern
-          return /\S+@\S+\.\S+/.test(value);
-        };
-
-        const validators = {
-          'first-name': (el) => el.value.trim() !== '' || 'This field is required',
-          'last-name': (el) => el.value.trim() !== '' || 'This field is required',
-          'email': (el) => (el.value.trim() !== '' ? (validateEmail(el.value) || 'Please enter a valid email address') : 'This field is required'),
-          'message': (el) => el.value.trim() !== '' || 'This field is required',
-          'consent': (el) => el.checked || 'To submit this form, please consent to being contacted',
-          'queryType': () => (document.querySelector('input[name="queryType"]:checked') ? true : 'Please select a query type')
-        };
-
-        const makeInvalidUI = (controlId) => {
-          if (controlId === 'queryType') {
-            const fieldsetError = document.getElementById('queryType-error');
-            fieldsetError && fieldsetError.classList.add('visible');
-            // add error style to radio groups
-            document.querySelectorAll('.radio-group').forEach(rg => rg.classList.add('error'));
-            return;
-          }
-          const control = document.getElementById(controlId);
-          if (!control) return;
-          control.classList.add('input-error');
-        };
-
-        const clearInvalidUI = (controlId) => {
-          if (controlId === 'queryType') {
-            const fieldsetError = document.getElementById('queryType-error');
-            fieldsetError && fieldsetError.classList.remove('visible');
-            document.querySelectorAll('.radio-group').forEach(rg => rg.classList.remove('error'));
-            return;
-          }
-          const control = document.getElementById(controlId);
-          if (!control) return;
-          control.classList.remove('input-error');
-        };
-
-        form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          let firstInvalid = null;
-          // clear previous errors
-          Object.keys(validators).forEach(id => {
-            clearError(id);
-            clearInvalidUI(id);
-          });
-
-          Object.entries(validators).forEach(([id, fn]) => {
-            let res;
-            if (id === 'queryType') {
-              res = fn();
-            } else {
-              const el = document.getElementById(id);
-              res = fn(el);
-            }
-            if (res !== true) {
-              showError(id, res);
-              makeInvalidUI(id);
-              if (!firstInvalid) firstInvalid = id === 'queryType' ? document.querySelector('input[name="queryType"]') : document.getElementById(id);
-            }
-          });
-
-          if (firstInvalid) {
-            firstInvalid.focus();
-            return;
-          }
-
-          // form is valid — do actual submit or handle success
-          // For now just log success
-          console.log('form valid — ready to submit');
-        });
-
-        // Clear field errors on input/change
-        ['first-name','last-name','email','message','consent'].forEach(id => {
-          const el = document.getElementById(id);
-          if (!el) return;
-          const evt = el.type === 'checkbox' ? 'change' : 'input';
-          el.addEventListener(evt, () => {
-            clearError(id);
-            clearInvalidUI(id);
-          });
-        });
-
-        // Radios: clear on change
-        document.querySelectorAll('input[name="queryType"]').forEach(r => {
-          r.addEventListener('change', () => {
-            clearError('queryType');
-            clearInvalidUI('queryType');
-          });
-        });
-
-      });
-    </script>
+    <script src="scripts.js" defer></script>
   </body>
 </html>
