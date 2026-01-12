@@ -23,22 +23,22 @@
 
         <div class="form-row">
             <div class="form-group">
-              <label for="first-name">First Name</label>
+              <label for="first-name">First Name <span class="required" aria-hidden="true">*</span></label>
               <input type="text" id="first-name" name="firstName" required />
             </div>
             <div class="form-group">
-              <label for="last-name">Last Name</label>
+              <label for="last-name">Last Name <span class="required" aria-hidden="true">*</span></label>
               <input type="text" id="last-name" name="lastName" required />
             </div>
         </div>
 
         <div class="form-group">
-          <label for="email">Email Address</label>
+          <label for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
           <input type="email" id="email" name="email" required />
         </div>
 
         <fieldset class="form-group">
-          <legend>Query Type</legend>
+          <legend>Query Type <span class="required" aria-hidden="true">*</span></legend>
 
           <div class="form-row">
               <div class="radio-group">
@@ -65,14 +65,14 @@
         </fieldset>
 
         <div class="form-group">
-          <label for="message">Message</label>
+          <label for="message">Message <span class="required" aria-hidden="true">*</span></label>
           <textarea id="message" name="message" required></textarea>
         </div>
 
         <div class="form-group checkbox-group">
           <input type="checkbox" id="consent" name="consent" required />
           <label for="consent">
-            I consent to being contacted by the team
+            I consent to being contacted by the team <span class="required" aria-hidden="true">*</span>
           </label>
         </div>
 
