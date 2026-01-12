@@ -95,7 +95,6 @@ textarea {
 input:focus,
 textarea:focus {
   outline: 2px solid var(--green-main);
-  outline-offset: 2px;
 }
 
 .radio-group {
@@ -145,7 +144,60 @@ button {
 }
 
 button:hover {
-  opacity: 0.9;
+    background-color: hsl(169, 82%, 22%);
+}
+
+input, textarea:hover {
+  /* reserved for minor hover tweaks */
+}
+
+/* Green accents and interactions */
+:root {
+  /* keep existing vars; ensure a fallback accent */
+  --green-accent-rgb: 30,163,100;
+}
+
+/* Asterisk for required fields */
+.required {
+  color: var(--green-main);
+  font-weight: var(--font-bold);
+  margin-left: 0.25rem;
+}
+
+/* Hover 'green light' for inputs and textarea */
+input[type="text"]:hover,
+input[type="email"]:hover,
+textarea:hover {
+  box-shadow: 0 0 0 6px rgba(var(--green-accent-rgb), 0.08);
+  border-color: var(--green-main);
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+}
+
+/* Hover/active feedback for radio and checkbox groups */
+.radio-group:hover,
+.checkbox-group:hover {
+  box-shadow: 0 0 0 6px rgba(var(--green-accent-rgb), 0.06);
+  border-color: var(--green-main);
+}
+
+/* Use accent-color for native form controls when checked */
+input[type="radio"],
+input[type="checkbox"] {
+  accent-color: var(--green-main);
+  transition: box-shadow 120ms ease, border-color 120ms ease;
+}
+
+/* Label styling when the underlying control is checked */
+.radio-group input[type="radio"]:checked + label,
+.checkbox-group input[type="checkbox"]:checked + label {
+  color: var(--green-main);
+  font-weight: var(--font-bold);
+}
+
+/* Make labels react on hover to give the 'green' hint for radios/checkboxes */
+.radio-group label:hover,
+.checkbox-group label:hover {
+  color: var(--green-main);
 }
 
 fieldset {
