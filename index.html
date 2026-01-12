@@ -81,5 +81,35 @@
         </div>
       </form>
     </main>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const groups = document.querySelectorAll('.radio-group');
+        groups.forEach((g) => {
+          const input = g.querySelector('input[type="radio"]');
+          if (!input) return;
+
+          // Clicking the group (outside the native input/label) should select the radio
+          g.addEventListener('click', (e) => {
+            if (e.target.tagName.toLowerCase() === 'input') return;
+            input.checked = true;
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+            input.focus({ preventScroll: true });
+          });
+
+          // Keep a "selected" class in sync for styling and for browsers that lack :has
+          input.addEventListener('change', () => {
+            document
+              .querySelectorAll(`.radio-group input[name="${input.name}"]`)
+              .forEach((inp) => {
+                const grp = inp.closest('.radio-group');
+                if (grp) grp.classList.toggle('selected', inp.checked);
+              });
+          });
+
+          // Initialize state
+          if (input.checked) g.classList.add('selected');
+        });
+      });
+    </script>
   </body>
 </html>

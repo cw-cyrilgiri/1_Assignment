@@ -200,6 +200,29 @@ input[type="checkbox"] {
   color: var(--green-main);
 }
 
+/* Selected state for the entire radio-group */
+.radio-group.selected,
+.radio-group:has(input:checked) {
+  background-color: var(--green-light);
+  border-color: var(--green-main);
+}
+
+.radio-group.selected label {
+  color: var(--green-main);
+  font-weight: var(--font-bold);
+}
+
+/* Remove native focus rectangle for radios and rely on group styling */
+input[type="radio"]:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Prevent the group from showing extra focus ring; keep keyboard accessibility */
+.radio-group:focus-within {
+  outline: none;
+}
+
 fieldset {
   border: none;
   padding: 0;
