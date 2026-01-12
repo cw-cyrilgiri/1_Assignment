@@ -140,9 +140,6 @@ button:hover {
   background-color: hsl(169, 82%, 22%);
 }
 
-input,
-textarea:hover {
-}
 
 .required {
   color: var(--green-main);
@@ -296,7 +293,6 @@ input[type="checkbox"] {
 .success-toast__title { display: block; font-weight: var(--font-bold); }
 .success-toast__message { font-size: 0.95rem; opacity: 0.95; }
 
-/* close button removed */
 
 @media (max-width: 480px) {
   .success-toast__inner { min-width: 280px; padding: 0.75rem; }
