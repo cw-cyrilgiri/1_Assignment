@@ -129,32 +129,29 @@ function initFormValidation() {
 function showSuccessToast() {
   const toast = document.getElementById('success-toast');
   if (!toast) return;
-  // ensure visible
+  // make visible with animation
   toast.hidden = false;
-  // force reflow then add class to trigger animation
-  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   toast.getBoundingClientRect();
   toast.classList.add('show');
 
-  const closeBtn = toast.querySelector('.success-toast__close');
+  // reset the form fields and UI
+  const form = document.querySelector('.contact-form');
+  if (form) {
+    form.reset();
+    // clear any error UI
+    document.querySelectorAll('.error-message').forEach((el) => {
+      el.textContent = '';
+      el.classList.remove('visible');
+    });
+    document.querySelectorAll('.input-error').forEach((el) => el.classList.remove('input-error'));
+    document.querySelectorAll('.radio-group').forEach((rg) => rg.classList.remove('selected', 'error'));
+  }
+
+  // auto-dismiss after timeout
   const dismiss = () => {
     toast.classList.remove('show');
     setTimeout(() => (toast.hidden = true), 420);
   };
 
-  // timeout auto-dismiss
-  const timeoutId = setTimeout(dismiss, 4200);
-
-  // click close
-  closeBtn?.addEventListener('click', () => {
-    clearTimeout(timeoutId);
-    dismiss();
-  }, { once: true });
-
-  // also dismiss when clicking the toast itself
-  toast.addEventListener('click', (e) => {
-    if ((e.target).closest('.success-toast__close')) return;
-    clearTimeout(timeoutId);
-    dismiss();
-  }, { once: true });
+  setTimeout(dismiss, 4200);
 }
