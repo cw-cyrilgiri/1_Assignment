@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us</title>
+
+    <!-- Google Font: Karla -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <main class="page">
+      <form action="" class="contact-form" novalidate>
+        <h1>Contact Us</h1>
+
+        <div class="form-row">
+            <div class="form-group">
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" name="firstName" required />
+            </div>
+            <div class="form-group">
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" name="lastName" required />
+            </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <fieldset class="form-group">
+          <legend>Query Type</legend>
+
+          <div class="form-row">
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="general-query"
+                  name="queryType"
+                  value="general"
+                  required
+                />
+                <label for="general-query">General Enquiry</label>
+              </div>
+              <div class="radio-group">
+                <input
+                  type="radio"
+                  id="support-query"
+                  name="queryType"
+                  value="support"
+                  required
+                />
+                <label for="support-query">Support Request</label>
+              </div>
+          </div>
+        </fieldset>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" required></textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <input type="checkbox" id="consent" name="consent" required />
+          <label for="consent">
+            I consent to being contacted by the team
+          </label>
+        </div>
+
+        <div class="form-group submit-group">
+          <button type="submit">Submit</button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>
