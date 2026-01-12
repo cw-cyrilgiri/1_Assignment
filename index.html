@@ -25,16 +25,19 @@
             <div class="form-group">
               <label for="first-name">First Name <span class="required" aria-hidden="true">*</span></label>
               <input type="text" id="first-name" name="firstName" required />
+              <div class="error-message" id="first-name-error" aria-live="polite"></div>
             </div>
             <div class="form-group">
               <label for="last-name">Last Name <span class="required" aria-hidden="true">*</span></label>
               <input type="text" id="last-name" name="lastName" required />
+              <div class="error-message" id="last-name-error" aria-live="polite"></div>
             </div>
         </div>
 
         <div class="form-group">
           <label for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
           <input type="email" id="email" name="email" required />
+          <div class="error-message" id="email-error" aria-live="polite"></div>
         </div>
 
         <fieldset class="form-group">
@@ -62,11 +65,13 @@
                 <label for="support-query">Support Request</label>
               </div>
           </div>
+          <div class="error-message" id="queryType-error" aria-live="polite"></div>
         </fieldset>
 
         <div class="form-group">
           <label for="message">Message <span class="required" aria-hidden="true">*</span></label>
           <textarea id="message" name="message" required></textarea>
+          <div class="error-message" id="message-error" aria-live="polite"></div>
         </div>
 
         <div class="form-group checkbox-group">
@@ -74,6 +79,7 @@
           <label for="consent">
             I consent to being contacted by the team <span class="required" aria-hidden="true">*</span>
           </label>
+          <div class="error-message" id="consent-error" aria-live="polite"></div>
         </div>
 
         <div class="form-group submit-group">
@@ -109,6 +115,116 @@
           // Initialize state
           if (input.checked) g.classList.add('selected');
         });
+
+        // FORM VALIDATION
+        const form = document.querySelector('.contact-form');
+
+        const showError = (id, message) => {
+          const el = document.getElementById(id + '-error');
+          if (!el) return;
+          el.textContent = message;
+          el.classList.add('visible');
+        };
+
+        const clearError = (id) => {
+          const el = document.getElementById(id + '-error');
+          if (!el) return;
+          el.textContent = '';
+          el.classList.remove('visible');
+        };
+
+        const validateEmail = (value) => {
+          // simple email pattern
+          return /\S+@\S+\.\S+/.test(value);
+        };
+
+        const validators = {
+          'first-name': (el) => el.value.trim() !== '' || 'This field is required',
+          'last-name': (el) => el.value.trim() !== '' || 'This field is required',
+          'email': (el) => (el.value.trim() !== '' ? (validateEmail(el.value) || 'Please enter a valid email address') : 'This field is required'),
+          'message': (el) => el.value.trim() !== '' || 'This field is required',
+          'consent': (el) => el.checked || 'To submit this form, please consent to being contacted',
+          'queryType': () => (document.querySelector('input[name="queryType"]:checked') ? true : 'Please select a query type')
+        };
+
+        const makeInvalidUI = (controlId) => {
+          if (controlId === 'queryType') {
+            const fieldsetError = document.getElementById('queryType-error');
+            fieldsetError && fieldsetError.classList.add('visible');
+            // add error style to radio groups
+            document.querySelectorAll('.radio-group').forEach(rg => rg.classList.add('error'));
+            return;
+          }
+          const control = document.getElementById(controlId);
+          if (!control) return;
+          control.classList.add('input-error');
+        };
+
+        const clearInvalidUI = (controlId) => {
+          if (controlId === 'queryType') {
+            const fieldsetError = document.getElementById('queryType-error');
+            fieldsetError && fieldsetError.classList.remove('visible');
+            document.querySelectorAll('.radio-group').forEach(rg => rg.classList.remove('error'));
+            return;
+          }
+          const control = document.getElementById(controlId);
+          if (!control) return;
+          control.classList.remove('input-error');
+        };
+
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          let firstInvalid = null;
+          // clear previous errors
+          Object.keys(validators).forEach(id => {
+            clearError(id);
+            clearInvalidUI(id);
+          });
+
+          Object.entries(validators).forEach(([id, fn]) => {
+            let res;
+            if (id === 'queryType') {
+              res = fn();
+            } else {
+              const el = document.getElementById(id);
+              res = fn(el);
+            }
+            if (res !== true) {
+              showError(id, res);
+              makeInvalidUI(id);
+              if (!firstInvalid) firstInvalid = id === 'queryType' ? document.querySelector('input[name="queryType"]') : document.getElementById(id);
+            }
+          });
+
+          if (firstInvalid) {
+            firstInvalid.focus();
+            return;
+          }
+
+          // form is valid — do actual submit or handle success
+          // For now just log success
+          console.log('form valid — ready to submit');
+        });
+
+        // Clear field errors on input/change
+        ['first-name','last-name','email','message','consent'].forEach(id => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          const evt = el.type === 'checkbox' ? 'change' : 'input';
+          el.addEventListener(evt, () => {
+            clearError(id);
+            clearInvalidUI(id);
+          });
+        });
+
+        // Radios: clear on change
+        document.querySelectorAll('input[name="queryType"]').forEach(r => {
+          r.addEventListener('change', () => {
+            clearError('queryType');
+            clearInvalidUI('queryType');
+          });
+        });
+
       });
     </script>
   </body>

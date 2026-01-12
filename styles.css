@@ -223,6 +223,28 @@ input[type="radio"]:focus {
   outline: none;
 }
 
+/* ERROR STYLES */
+.input-error {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 6px rgba(255, 80, 80, 0.06);
+}
+
+.radio-group.error {
+  border-color: var(--red);
+  background-color: rgba(255,80,80,0.02);
+}
+
+.error-message {
+  display: none;
+  color: var(--red);
+  margin-top: 0.375rem;
+  font-size: 0.9rem;
+}
+
+.error-message.visible {
+  display: block;
+}
+
 fieldset {
   border: none;
   padding: 0;
