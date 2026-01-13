@@ -27,60 +27,61 @@
       </div>
     </div>
     <main class="page">
-      <form action="" class="contact-form" novalidate>
-        <h1>Contact Us</h1>
+      <form class="contact-form">
+  <h1>Contact Us</h1>
 
-        <div class="form-row">
-            <div class="form-group">
-              <label for="first-name">First Name <span class="required" aria-hidden="true">*</span></label>
-              <input type="text" id="first-name" name="firstName" required aria-required="true" aria-describedby="first-name-error" />
-              <div class="error-message" id="first-name-error" aria-live="polite"></div>
-            </div>
-            <div class="form-group">
-              <label for="last-name">Last Name <span class="required" aria-hidden="true">*</span></label>
-              <input type="text" id="last-name" name="lastName" required aria-required="true" aria-describedby="last-name-error" />
-              <div class="error-message" id="last-name-error" aria-live="polite"></div>
-            </div>
-        </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label for="first-name">First Name <span class="required">*</span></label>
+      <input id="first-name" name="firstName" required />
+      <div class="error-message">This field is required</div>
+    </div>
 
-        <div class="form-group">
-          <label for="email">Email Address <span class="required" aria-hidden="true">*</span></label>
-          <input type="email" id="email" name="email" required aria-required="true" aria-describedby="email-error" />
-          <div class="error-message" id="email-error" aria-live="polite"></div>
-        </div>
+    <div class="form-group">
+      <label for="last-name">Last Name <span class="required">*</span></label>
+      <input id="last-name" name="lastName" required />
+      <div class="error-message">This field is required</div>
+    </div>
+  </div>
 
-        <fieldset class="form-group">
-          <legend id="queryType-label">Query Type <span class="required" aria-hidden="true">*</span></legend>
+  <div class="form-group">
+    <label for="email">Email Address <span class="required">*</span></label>
+    <input id="email" type="email" required />
+    <div class="error-message">Please enter a valid email</div>
+  </div>
 
-          <div class="form-row">
-              <div class="radio-group" role="group" aria-labelledby="queryType-label">
-                <input type="radio" id="general-query" name="queryType" value="general" required aria-required="true" aria-describedby="queryType-error" />
-                <label for="general-query">General Enquiry</label>
-              </div>
-              <div class="radio-group" role="group" aria-labelledby="queryType-label">
-                <input type="radio" id="support-query" name="queryType" value="support" required aria-required="true" aria-describedby="queryType-error" />
-                <label for="support-query">Support Request</label>
-              </div>
-          </div>
-          <div class="error-message" id="queryType-error" aria-live="polite"></div>
-        </fieldset>
+  <fieldset class="form-group">
+    <legend>Query Type <span class="required">*</span></legend>
 
-        <div class="form-group">
-          <label for="message">Message <span class="required" aria-hidden="true">*</span></label>
-          <textarea id="message" name="message" required aria-required="true" aria-describedby="message-error"></textarea>
-          <div class="error-message" id="message-error" aria-live="polite"></div>
-        </div>
+    <div class="form-row">
+      <label class="radio-group">
+        <input type="radio" name="queryType" required />
+        General Enquiry
+      </label>
 
-        <div class="form-group checkbox-group">
-          <input type="checkbox" id="consent" name="consent" required aria-required="true" aria-describedby="consent-error" />
-          <label for="consent">I consent to being contacted by the team <span class="required" aria-hidden="true">*</span></label>
-          <div class="error-message" id="consent-error" aria-live="polite"></div>
-        </div>
+      <label class="radio-group">
+        <input type="radio" name="queryType" />
+        Support Request
+      </label>
+    </div>
 
-        <div class="form-group submit-group">
-          <button type="submit">Submit</button>
-        </div>
-      </form>
+    <div class="error-message">Please select a query type</div>
+  </fieldset>
+
+  <div class="form-group">
+    <label for="message">Message <span class="required">*</span></label>
+    <textarea id="message" required></textarea>
+    <div class="error-message">This field is required</div>
+  </div>
+
+  <div class="form-group checkbox-group">
+    <input type="checkbox" id="consent" required />
+    <label for="consent">I consent to being contacted</label>
+    <div class="error-message">Consent is required</div>
+  </div>
+
+  <button type="submit">Submit</button>
+</form>
     </main>
     <script src="scripts.js" defer></script>
   </body>

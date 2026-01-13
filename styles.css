@@ -16,6 +16,7 @@
   --green-accent-rgb: 30, 163, 100;
 }
 
+/* Reset */
 *,
 *::before,
 *::after {
@@ -37,6 +38,7 @@ body {
   padding: var(--gap-lg);
 }
 
+/* Form */
 .contact-form {
   background-color: var(--white);
   width: 100%;
@@ -64,6 +66,7 @@ h1 {
   gap: var(--gap-md);
 }
 
+/* Labels */
 label,
 legend {
   display: block;
@@ -71,6 +74,12 @@ legend {
   font-weight: var(--font-bold);
 }
 
+.required {
+  color: var(--green-main);
+  margin-left: 0.25rem;
+}
+
+/* Inputs */
 input,
 textarea {
   width: 100%;
@@ -90,6 +99,23 @@ textarea:focus {
   outline: 2px solid var(--green-main);
 }
 
+/* Hover states */
+input[type="text"]:hover,
+input[type="email"]:hover,
+textarea:hover {
+  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.08);
+  border-color: var(--green-main);
+  transition: box-shadow 180ms ease, border-color 180ms ease;
+}
+
+/* Radios & checkboxes */
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+  accent-color: var(--green-main);
+}
+
 .radio-group {
   display: flex;
   align-items: center;
@@ -100,17 +126,33 @@ textarea:focus {
   cursor: pointer;
 }
 
-.radio-group label {
-  margin: 0;
-  font-weight: normal;
+.radio-group:hover,
+.checkbox-group:hover {
+  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.06);
+  border-color: var(--green-main);
 }
 
-.radio-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap-md);
+/* Checked radio card */
+.radio-group:has(input:checked) {
+  background-color: var(--green-light);
+  border-color: var(--green-main);
 }
 
+.radio-group:has(input:checked) label {
+  color: var(--green-main);
+  font-weight: var(--font-bold);
+}
+
+/* Focus styles */
+.radio-group:focus-within {
+  box-shadow: 0 0 0 3px rgba(var(--green-accent-rgb), 0.12);
+}
+
+input[type="radio"]:focus-visible {
+  outline: 3px solid rgba(var(--green-accent-rgb), 0.12);
+}
+
+/* Checkbox layout */
 .checkbox-group {
   display: flex;
   align-items: center;
@@ -118,11 +160,7 @@ textarea:focus {
   margin-top: var(--gap-md);
 }
 
-.checkbox-group label {
-  margin: 0;
-  font-weight: normal;
-}
-
+/* Button */
 button {
   width: 100%;
   margin-top: var(--gap-lg);
@@ -140,74 +178,9 @@ button:hover {
   background-color: hsl(169, 82%, 22%);
 }
 
+/* ---------- Validation (CSS-only) ---------- */
 
-.required {
-  color: var(--green-main);
-  font-weight: var(--font-bold);
-  margin-left: 0.25rem;
-}
-
-input[type="text"]:hover,
-input[type="email"]:hover,
-textarea:hover {
-  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.08);
-  border-color: var(--green-main);
-  transition: box-shadow 180ms ease, border-color 180ms ease;
-}
-
-.radio-group:hover,
-.checkbox-group:hover {
-  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.06);
-  border-color: var(--green-main);
-}
-
-input[type="radio"],
-input[type="checkbox"] {
-  accent-color: var(--green-main);
-  transition: box-shadow 120ms ease, border-color 120ms ease;
-}
-
-.radio-group input[type="radio"]:checked + label,
-.checkbox-group input[type="checkbox"]:checked + label {
-  color: var(--green-main);
-  font-weight: var(--font-bold);
-}
-
-.radio-group label:hover{
-  color: var(--green-main);
-}
-
-.radio-group.selected,
-.radio-group:has(input:checked) {
-  background-color: var(--green-light);
-  border-color: var(--green-main);
-}
-
-.radio-group.selected label {
-  color: var(--green-main);
-  font-weight: var(--font-bold);
-}
-
-input[type="radio"]:focus-visible {
-  outline: 3px solid rgba(var(--green-accent-rgb), 0.12);
-  box-shadow: none;
-}
-
-.radio-group:focus-within {
-  box-shadow: 0 0 0 3px rgba(var(--green-accent-rgb), 0.12);
-}
-
-/* ERROR STYLES */
-.input-error {
-  border-color: var(--red) !important;
-  box-shadow: 0 0 0 6px rgba(255, 80, 80, 0.06);
-}
-
-.radio-group.error {
-  border-color: var(--red);
-  background-color: rgba(255,80,80,0.02);
-}
-
+/* Hide all errors by default */
 .error-message {
   display: none;
   color: var(--red);
@@ -215,8 +188,25 @@ input[type="radio"]:focus-visible {
   font-size: 0.9rem;
 }
 
-.error-message.visible {display:block}
+/* Show errors only after submit attempt */
+.contact-form:has(:invalid) :invalid + .error-message {
+  display: block;
+}
 
+/* Invalid inputs */
+input:invalid,
+textarea:invalid {
+  border-color: var(--red);
+  box-shadow: 0 0 0 6px rgba(255, 80, 80, 0.06);
+}
+
+/* Invalid radio group */
+fieldset:has(input[type="radio"]:invalid) .radio-group {
+  border-color: var(--red);
+  background-color: rgba(255, 80, 80, 0.02);
+}
+
+/* Fieldset reset */
 fieldset {
   border: none;
   padding: 0;
@@ -225,31 +215,8 @@ fieldset {
   flex-direction: column;
 }
 
-input[type="radio"],
-input[type="checkbox"] {
-  width: auto;
-  margin: 0;
-}
+/* ---------- Toast ---------- */
 
-@media (max-width: 375px) {
-  .contact-form {
-    padding: var(--gap-lg);
-  }
-
-  .form-row {
-    grid-template-columns: 1fr;
-  }
-
-  .radio-wrapper {
-    grid-template-columns: 1fr;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-}
-
-/* Success toast (top-centred) */
 .success-toast {
   position: fixed;
   left: 50%;
@@ -258,11 +225,20 @@ input[type="checkbox"] {
   z-index: 1200;
   pointer-events: none;
   opacity: 0;
-  transition: transform 420ms cubic-bezier(.2,.9,.2,1), opacity 280ms ease;
+  transition:
+    transform 420ms cubic-bezier(.2,.9,.2,1),
+    opacity 280ms ease;
 }
 
-.success-toast[hidden]{display:block}
-.success-toast.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+.success-toast[hidden] {
+  display: block;
+}
+
+.success-toast.show {
+  transform: translate(-50%, 0);
+  opacity: 1;
+  pointer-events: auto;
+}
 
 .success-toast__inner {
   display: flex;
@@ -282,18 +258,43 @@ input[type="checkbox"] {
   width: 40px;
   height: 40px;
   border-radius: 999px;
-  background: rgba(255,255,255,0.06);
+  background: rgba(255, 255, 255, 0.06);
   flex: 0 0 40px;
-  transform-origin: center;
   transition: transform 360ms cubic-bezier(.2,.9,.2,1);
 }
 
-.success-toast.show .success-toast__icon { transform: scale(1.06); }
+.success-toast.show .success-toast__icon {
+  transform: scale(1.06);
+}
 
-.success-toast__title { display: block; font-weight: var(--font-bold); }
-.success-toast__message { font-size: 0.95rem; opacity: 0.95; }
+.success-toast__title {
+  font-weight: var(--font-bold);
+}
 
+.success-toast__message {
+  font-size: 0.95rem;
+  opacity: 0.95;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 375px) {
+  .contact-form {
+    padding: var(--gap-lg);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+}
 
 @media (max-width: 480px) {
-  .success-toast__inner { min-width: 280px; padding: 0.75rem; }
+  .success-toast__inner {
+    min-width: 280px;
+    padding: 0.75rem;
+  }
 }
