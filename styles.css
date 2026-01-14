@@ -166,6 +166,19 @@ textarea:hover {
   border-color: var(--green-main);
 }
 
+input[type="text"]:focus-visible,
+input[type="email"]:focus-visible,
+textarea:focus-visible {
+  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.08);
+  outline: 1px solid var(--green-main);
+}
+
+.radio-group:focus-visible,
+.checkbox-group:focus-visible {
+  box-shadow: 0 0 0 2px rgba(var(--green-accent-rgb), 0.06);
+  outline: 1px solid var(--green-main);
+}
+
 input[type="radio"],
 input[type="checkbox"] {
   accent-color: var(--green-main);
