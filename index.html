@@ -53,14 +53,14 @@
           <legend id="queryType-label">Query Type <span class="required" aria-hidden="true">*</span></legend>
 
           <div class="form-row">
-              <div class="radio-group" role="group" aria-labelledby="queryType-label">
+              <label class="radio-group" for="general-query">
                 <input type="radio" id="general-query" name="queryType" value="general" required aria-required="true" aria-describedby="queryType-error" />
-                <label for="general-query">General Enquiry</label>
-              </div>
-              <div class="radio-group" role="group" aria-labelledby="queryType-label">
+                General Enquiry
+              </label>
+              <label class="radio-group" for="support-query">
                 <input type="radio" id="support-query" name="queryType" value="support" required aria-required="true" aria-describedby="queryType-error" />
-                <label for="support-query">Support Request</label>
-              </div>
+                Support Request
+              </label>
           </div>
           <div class="error-message" id="queryType-error" aria-live="polite"></div>
         </fieldset>
