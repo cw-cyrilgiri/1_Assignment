@@ -1,199 +1,366 @@
-const TOAST_ANIMATION_MS = 420;
-const TOAST_VISIBLE_MS = 4200;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TIMING = {
+  TOAST_ANIMATION_MS: 420,
+  TOAST_VISIBLE_MS: 4200,
+};
 
-// attach event listeners after DOM is ready
-document.addEventListener("DOMContentLoaded", () => init().catch(handleError));
+const SELECTORS = {
+  FORM: ".contact-form",
+  TOAST: "#success-toast",
+  ERROR_MESSAGE: ".error-message",
+  INPUT_ERROR: ".input-error",
+  RADIO_GROUP: ".radio-group",
+  SUCCESS_TOAST_ICON: ".success-toast-icon",
+};
 
-// Helper functions for querying DOM
-function qs(sel) {
-  return document.querySelector(sel);
-}
-function qsa(sel) {
-  return Array.from(document.querySelectorAll(sel));
-}
-function byId(id) {
-  return document.getElementById(id);
-}
+const FIELD_IDS = {
+  FIRST_NAME: "first-name",
+  LAST_NAME: "last-name",
+  EMAIL: "email",
+  QUERY_TYPE: "queryType",
+  MESSAGE: "message",
+  CONSENT: "consent",
+};
 
-// Validators
-const required = (el) =>
-  el && el.value && el.value.trim() ? true : "This field is required";
-const email = (el) =>
-  el && el.value && emailRegex.test(el.value)
-    ? true
-    : el && el.value
-    ? "Please enter a valid email address"
-    : "This field is required";
-const checked = (el) =>
-  el && el.checked
-    ? true
-    : "To submit this form, please consent to being contacted";
-const radio = (name) =>
-  qsa(`input[name="${name}"]:checked`).length
-    ? true
-    : "Please select a query type";
+const FIELD_NAMES = {
+  QUERY_TYPE: "queryType",
+};
 
-//add error message
-function setError(id, msg) {
-  const box = byId(id + "-error");
-  if (!box) return;
-  box.textContent = msg;
-  box.classList.add("visible");
+const ARIA_ATTRIBUTES = {
+  INVALID: "aria-invalid",
+};
 
-  // set aria-invalid for error indication
-  if (id === "queryType")
-    qsa('input[name="queryType"]').forEach((r) =>
-      r.setAttribute("aria-invalid", "true")
-    );
-  else byId(id)?.setAttribute("aria-invalid", "true");
+const CLASS_NAMES = {
+  VISIBLE: "visible",
+  ERROR: "error",
+  INPUT_ERROR: "input-error",
+  SELECTED: "selected",
+  SHOW: "show",
+};
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const Name_REGEX = /^[a-zA-Z\s'-]+$/;
+
+function querySelector(selector) {
+  return { selector, element: document.querySelector(selector) };
 }
 
-// clear error message
-function clearError(id) {
-  const box = byId(id + "-error");
-  if (!box) return;
-  box.textContent = "";
-  box.classList.remove("visible");
-
-  // remove aria-invalid
-  if (id === "queryType")
-    qsa('input[name="queryType"]').forEach((r) =>
-      r.removeAttribute("aria-invalid")
-    );
-  else byId(id)?.removeAttribute("aria-invalid");
+function querySelectorAll(selector) {
+  return { selector, elements: Array.from(document.querySelectorAll(selector)) };
 }
 
-// add/remove error styles
-function mark(id) {
-  if (id === "queryType")
-    qsa(".radio-group").forEach((r) => r.classList.add("error"));
-  else byId(id)?.classList.add("input-error");
-}
-function unmark(id) {
-  if (id === "queryType")
-    qsa(".radio-group").forEach((r) => r.classList.remove("error"));
-  else byId(id)?.classList.remove("input-error");
+function getElementById(id) {
+  return { id, element: document.getElementById(id) };
 }
 
-// central promise error handler
-function handleError(err) {
-  console.error("Form script error:", err);
+function getErrorElementById(id) {
+  return { errorId: `${id}-error`, element: document.getElementById(`${id}-error`) };
 }
 
-// validation logic
-function validateField(id, validator) {
-  const el = id === "queryType" ? null : byId(id);
-  return Promise.resolve(id === "queryType" ? validator() : validator(el)).then(
-    (res) => {
-      if (res !== true) {
-        setError(id, res);
-        mark(id);
-        return false;
+function getRadioInputsByName(name) {
+  return querySelectorAll(`input[name="${name}"]:checked`);
+}
+
+function getFirstInvalidField(form) {
+  return { element: form.querySelector(":invalid") };
+}
+
+function validateRequired(element) {
+  if (!element || !element.value || !element.value.trim()) {
+    return { isValid: false, message: "This field is required" };
+  }
+  return { isValid: true };
+}
+
+function validateName(element) {
+  if (!element || !element.value) {
+    return { isValid: false, message: "This field is required" };
+  } else if (!Name_REGEX.test(element.value)) {
+    return { isValid: false, message: "Please enter a valid name" };
+  }
+  return { isValid: true };
+}
+
+function validateEmail(element) {
+  if (!element || !element.value) {
+    return { isValid: false, message: "This field is required" };
+  }
+  if (!EMAIL_REGEX.test(element.value)) {
+    return { isValid: false, message: "Please enter a valid email address" };
+  }
+  return { isValid: true };
+}
+
+function validateChecked(element) {
+  if (!element || !element.checked) {
+    return { isValid: false, message: "To submit this form, please consent to being contacted" };
+  }
+  return { isValid: true };
+}
+
+function validateRadioGroup(name) {
+  const { elements } = getRadioInputsByName(name);
+  if (!elements || !elements.length) {
+    return { isValid: false, message: "Please select a query type" };
+  }
+  return { isValid: true };
+}
+
+function setErrorMessage(id, message) {
+  const { element: errorBox } = getErrorElementById(id);
+  if (!errorBox) {
+    return { success: false };
+  }
+  errorBox.textContent = message;
+  errorBox.classList.add(CLASS_NAMES.VISIBLE);
+  return { success: true };
+}
+
+function clearErrorMessage(id) {
+  const { element: errorBox } = getErrorElementById(id);
+  if (!errorBox) {
+    return { success: false };
+  }
+  errorBox.textContent = "";
+  errorBox.classList.remove(CLASS_NAMES.VISIBLE);
+  return { success: true };
+}
+
+function setAriaInvalid(id) {
+  if (id === FIELD_IDS.QUERY_TYPE) {
+    const { elements } = getRadioInputsByName(FIELD_NAMES.QUERY_TYPE);
+    elements.forEach((radio) => {
+      radio.setAttribute(ARIA_ATTRIBUTES.INVALID, "true");
+    });
+  } else {
+    const { element } = getElementById(id);
+    element?.setAttribute(ARIA_ATTRIBUTES.INVALID, "true");
+  }
+}
+
+function removeAriaInvalid(id) {
+  if (id === FIELD_IDS.QUERY_TYPE) {
+    const { elements } = getRadioInputsByName(FIELD_NAMES.QUERY_TYPE);
+    elements.forEach((radio) => {
+      radio.removeAttribute(ARIA_ATTRIBUTES.INVALID);
+    });
+  } else {
+    const { element } = getElementById(id);
+    element?.removeAttribute(ARIA_ATTRIBUTES.INVALID);
+  }
+}
+
+function addErrorStyle(id) {
+  if (id === FIELD_IDS.QUERY_TYPE) {
+    const { elements } = querySelectorAll(SELECTORS.RADIO_GROUP);
+    elements.forEach((group) => {
+      group.classList.add(CLASS_NAMES.ERROR);
+    });
+  } else {
+    const { element } = getElementById(id);
+    element?.classList.add(CLASS_NAMES.INPUT_ERROR);
+  }
+}
+
+function removeErrorStyle(id) {
+  if (id === FIELD_IDS.QUERY_TYPE) {
+    const { elements } = querySelectorAll(SELECTORS.RADIO_GROUP);
+    elements.forEach((group) => {
+      group.classList.remove(CLASS_NAMES.ERROR);
+    });
+  } else {
+    const { element } = getElementById(id);
+    element?.classList.remove(CLASS_NAMES.INPUT_ERROR);
+  }
+}
+
+function displayFieldError(id, message) {
+  setErrorMessage(id, message);
+  setAriaInvalid(id);
+  addErrorStyle(id);
+}
+
+function clearFieldError(id) {
+  clearErrorMessage(id);
+  removeAriaInvalid(id);
+  removeErrorStyle(id);
+}
+
+function validateFieldWithValidator(id, validator) {
+  const element = id === FIELD_IDS.QUERY_TYPE ? null : getElementById(id).element;
+  return Promise.resolve(id === FIELD_IDS.QUERY_TYPE ? validator() : validator(element)).then(
+    (result) => {
+      if (!result.isValid) {
+        displayFieldError(id, result.message);
+        return { id, isValid: false };
       }
-      clearError(id);
-      unmark(id);
-      return true;
+      clearFieldError(id);
+      return { id, isValid: true };
     }
   );
 }
 
-function init() {
-  const form = qs(".contact-form");
-  if (!form) return Promise.resolve(false);
-
-  // Handle built-in invalid events and show custom messages (no loops)
+function attachInvalidEventListener(form) {
   form.addEventListener(
     "invalid",
-    (e) => {
-      e.preventDefault(); // prevent native tooltip
-      const el = e.target;
-      const id = el.name === "queryType" ? "queryType" : el.id;
-      let msg = "This field is required";
-      if (id === "email") msg = email(el);
-      else if (id === "consent") msg = checked(el);
-      else if (id === "queryType") msg = radio("queryType");
-      else msg = required(el);
-      if (msg !== true) {
-        setError(id, msg);
-        mark(id);
+    (event) => {
+      event.preventDefault();
+      const element = event.target;
+      const id = element.name === FIELD_NAMES.QUERY_TYPE ? FIELD_IDS.QUERY_TYPE : element.id;
+
+      let validator = validateRequired;
+      if (id === FIELD_IDS.EMAIL) {
+        validator = validateEmail;
+      } else if (id === FIELD_IDS.FIRST_NAME || id === FIELD_IDS.LAST_NAME) {
+        validator = validateName;
+      } else if (id === FIELD_IDS.CONSENT) {
+        validator = validateChecked;
+      } else if (id === FIELD_IDS.QUERY_TYPE) {
+        validator = () => {
+          return validateRadioGroup(FIELD_NAMES.QUERY_TYPE);
+        };
+      }
+
+      const result = validator(element);
+      if (!result.isValid) {
+        displayFieldError(id, result.message);
       } else {
-        clearError(id);
-        unmark(id);
+        clearFieldError(id);
       }
     },
     true
   );
+}
 
-  // Clear errors on user input/change (single listeners, no loops)
-  form.addEventListener("input", (e) => {
-    const el = e.target;
-    const id = el.name === "queryType" ? "queryType" : el.id;
-    clearError(id);
-    unmark(id);
+function attachInputEventListener(form) {
+  form.addEventListener("input", (event) => {
+    const element = event.target;
+    const id = element.name === FIELD_NAMES.QUERY_TYPE ? FIELD_IDS.QUERY_TYPE : element.id;
+    clearFieldError(id);
   });
-  form.addEventListener("change", (e) => {
-    const el = e.target;
-    const id = el.name === "queryType" ? "queryType" : el.id;
-    clearError(id);
-    unmark(id);
-  });
+}
 
+function attachChangeEventListener(form) {
+  form.addEventListener("change", (event) => {
+    const element = event.target;
+    const id = element.name === FIELD_NAMES.QUERY_TYPE ? FIELD_IDS.QUERY_TYPE : element.id;
+    clearFieldError(id);
+  });
+}
+
+function focusFirstInvalidField(form) {
+  const { element: firstInvalid } = getFirstInvalidField(form);
+  if (!firstInvalid) {
+    return;
+  }
+  const focusTarget =
+    firstInvalid.name === FIELD_NAMES.QUERY_TYPE
+      ? querySelector(`input[name="${FIELD_NAMES.QUERY_TYPE}"]`).element
+      : firstInvalid;
+  focusTarget?.focus();
+}
+
+function attachSubmitEventListener(form) {
   form.addEventListener(
     "submit",
-    async (e) => {
-      e.preventDefault();
-      // checkValidity/reportValidity will trigger invalid events for any failing controls
+    async (event) => {
+      event.preventDefault();
+
       if (!form.checkValidity()) {
-        form.reportValidity(); // triggers invalid handlers above
-        focusFirstInvalid(form);
+        form.reportValidity();
+        focusFirstInvalidField(form);
         return;
       }
-      await showSuccessToast();
+
+      try {
+        await showSuccessToast();
+      } catch (error) {
+        handleError(error);
+      }
     },
     false
   );
-
-  return Promise.resolve(true);
 }
 
-//focus on first invalid field
-const focusFirstInvalid = (form) => {
-  const firstBad = form.querySelector(":invalid");
-  (firstBad && firstBad.name === "queryType"
-    ? qs('input[name="queryType"]')
-    : firstBad
-  )?.focus();
-};
+function resetFormAfterSuccess(form) {
+  form.reset();
 
-function showSuccessToast() {
-  const toast = byId("success-toast");
-  if (!toast) return Promise.resolve(false);
+  const { elements: errorMessages } = querySelectorAll(SELECTORS.ERROR_MESSAGE);
+  errorMessages.forEach((msg) => {
+    msg.textContent = "";
+    msg.classList.remove(CLASS_NAMES.VISIBLE);
+  });
 
+  const { elements: inputErrors } = querySelectorAll(SELECTORS.INPUT_ERROR);
+  inputErrors.forEach((input) => {
+    input.classList.remove(CLASS_NAMES.INPUT_ERROR);
+  });
+
+  const { elements: radioGroups } = querySelectorAll(SELECTORS.RADIO_GROUP);
+  radioGroups.forEach((group) => {
+    group.classList.remove(CLASS_NAMES.SELECTED, CLASS_NAMES.ERROR);
+  });
+
+  const firstInput = querySelector("input,textarea,select").element;
+  firstInput?.focus();
+}
+
+function hideToast(toast) {
   return new Promise((resolve) => {
-    toast.hidden = false;
-    toast.getBoundingClientRect();
-    toast.classList.add("show");
-    const form = qs(".contact-form");
-    if (form) {
-      form.reset();
-      qsa(".error-message").forEach((e) => {
-        e.textContent = "";
-        e.classList.remove("visible");
-      });
-      qsa(".input-error").forEach((e) => e.classList.remove("input-error"));
-      qsa(".radio-group").forEach((r) =>
-        r.classList.remove("selected", "error")
-      );
-      qs("input,textarea,select")?.focus();
-    }
-    const hide = () => {
-      toast.classList.remove("show");
-      setTimeout(() => {
-        toast.hidden = true;
-        resolve(true);
-      }, TOAST_ANIMATION_MS);
-    };
-    setTimeout(hide, TOAST_VISIBLE_MS);
+    toast.classList.remove(CLASS_NAMES.SHOW);
+    setTimeout(() => {
+      toast.hidden = true;
+      resolve();
+    }, TIMING.TOAST_ANIMATION_MS);
   });
 }
+
+function showSuccessToast() {
+  const { element: toast } = getElementById("success-toast");
+  if (!toast) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    const { element: form } = querySelector(SELECTORS.FORM);
+
+    toast.hidden = false;
+    toast.getBoundingClientRect();
+    toast.classList.add(CLASS_NAMES.SHOW);
+
+    if (form) {
+      resetFormAfterSuccess(form);
+    }
+
+    setTimeout(() => {
+      hideToast(toast).then(() => {
+        resolve();
+      });
+    }, TIMING.TOAST_VISIBLE_MS);
+  });
+}
+
+function handleError(error) {
+  console.error("Form script error:", error);
+}
+
+function initializeForm() {
+  const { element: form } = querySelector(SELECTORS.FORM);
+  if (!form) {
+    return { success: false };
+  }
+
+  attachInvalidEventListener(form);
+  attachInputEventListener(form);
+  attachChangeEventListener(form);
+  attachSubmitEventListener(form);
+
+  return { success: true };
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  try {
+    initializeForm();
+  } catch (error) {
+    handleError(error);
+  }
+});
