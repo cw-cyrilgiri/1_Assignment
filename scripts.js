@@ -1,5 +1,6 @@
 const TOAST_ANIMATION_MS = 420;
 const TOAST_VISIBLE_MS = 4200;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // attach event listeners after DOM is ready
 document.addEventListener("DOMContentLoaded", () => init().catch(handleError));
@@ -19,7 +20,7 @@ function byId(id) {
 const required = (el) =>
   el && el.value && el.value.trim() ? true : "This field is required";
 const email = (el) =>
-  el && el.value && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value)
+  el && el.value && emailRegex.test(el.value)
     ? true
     : el && el.value
     ? "Please enter a valid email address"
@@ -101,74 +102,69 @@ function init() {
   const form = qs(".contact-form");
   if (!form) return Promise.resolve(false);
 
-  // map of field IDs to their validator functions
-  const validators = {
-    "first-name": required,
-    "last-name": required,
-    email: email,
-    message: required,
-    consent: checked,
-    queryType: () => radio("queryType"),
-  };
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      Object.keys(validators).forEach((id) => {
+  // Handle built-in invalid events and show custom messages (no loops)
+  form.addEventListener(
+    "invalid",
+    (e) => {
+      e.preventDefault(); // prevent native tooltip
+      const el = e.target;
+      const id = el.name === "queryType" ? "queryType" : el.id;
+      let msg = "This field is required";
+      if (id === "email") msg = email(el);
+      else if (id === "consent") msg = checked(el);
+      else if (id === "queryType") msg = radio("queryType");
+      else msg = required(el);
+      if (msg !== true) {
+        setError(id, msg);
+        mark(id);
+      } else {
         clearError(id);
         unmark(id);
-      });
-      let firstBad = null;
-      for (const [id, fn] of Object.entries(validators)) {
-        const ok = await validateField(id, fn);
-        if (!ok && !firstBad)
-          firstBad =
-            id === "queryType" ? qs('input[name="queryType"]') : byId(id);
       }
-      if (firstBad) {
-        firstBad.focus();
+    },
+    true
+  );
+
+  // Clear errors on user input/change (single listeners, no loops)
+  form.addEventListener("input", (e) => {
+    const el = e.target;
+    const id = el.name === "queryType" ? "queryType" : el.id;
+    clearError(id);
+    unmark(id);
+  });
+  form.addEventListener("change", (e) => {
+    const el = e.target;
+    const id = el.name === "queryType" ? "queryType" : el.id;
+    clearError(id);
+    unmark(id);
+  });
+
+  form.addEventListener(
+    "submit",
+    async (e) => {
+      e.preventDefault();
+      // checkValidity/reportValidity will trigger invalid events for any failing controls
+      if (!form.checkValidity()) {
+        form.reportValidity(); // triggers invalid handlers above
+        focusFirstInvalid(form);
         return;
       }
       await showSuccessToast();
-    } catch (err) {
-      handleError(err);
-    }
-  });
-
-  // live validation: blur for text, change for checkbox/radio
-  Object.entries({ ...validators }).forEach(([id, fn]) => {
-    if (id === "queryType") {
-      qsa('input[name="queryType"]').forEach((r) =>
-        r.addEventListener("change", () =>
-          validateField("queryType", fn).catch(handleError)
-        )
-      );
-      const fieldset = byId("queryType-label")?.closest("fieldset");
-      if (fieldset)
-        fieldset.addEventListener("focusout", () =>
-          validateField("queryType", fn).catch(handleError)
-        );
-      return;
-    }
-    const el = byId(id);
-    if (!el) return;
-    if (el.type === "checkbox")
-      el.addEventListener("change", () =>
-        validateField(id, fn).catch(handleError)
-      );
-    else {
-      el.addEventListener("blur", () =>
-        validateField(id, fn).catch(handleError)
-      );
-      el.addEventListener("input", () => {
-        clearError(id);
-        unmark(id);
-      });
-    }
-  });
+    },
+    false
+  );
 
   return Promise.resolve(true);
 }
+
+//focus on first invalid field
+const focusFirstInvalid = (form) => {
+  const firstBad = form.querySelector(":invalid");
+  (firstBad && firstBad.name === "queryType"
+    ? qs('input[name="queryType"]')
+    : firstBad
+  )?.focus();
+};
 
 function showSuccessToast() {
   const toast = byId("success-toast");
